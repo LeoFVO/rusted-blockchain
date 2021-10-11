@@ -31,3 +31,25 @@ impl Block {
     "defaulthash".to_string()
   }
 }
+
+#[cfg(test)]
+mod tests {
+  use super::*;
+  #[test]
+  fn create_block() {
+    let block = Block::new("test_transaction_string".to_string(), "test_hash_string".to_string());
+    assert!(!block.transactions.is_empty(), "Block created unsuccessfully");
+  }
+
+  #[test]
+  fn block_contain_transactions_datas() {
+    let block = Block::new("test_transaction_string".to_string(), "test_hash_string".to_string());
+    assert!(format!("{}", block).contains("test_transaction_string"), "Block string format did not contain transactions datas")
+  }
+
+  #[test]
+  fn block_contain_hash() {
+    let block = Block::new("test_transaction_string".to_string(), "test_hash_string".to_string());
+    assert!(format!("{}", block).contains("test_hash_string"), "Block string format did not contain hash")
+  }
+}
