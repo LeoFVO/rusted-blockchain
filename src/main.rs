@@ -1,5 +1,5 @@
-// mod block;
-// mod chain;
+mod block;
+mod chain;
 
 fn main() {
     println!("Hello, blockchain!");
