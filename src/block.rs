@@ -1,15 +1,20 @@
 use chrono::prelude::*;
-// use sha2::{Digest};
-// use generic_array::{GenericArray};
+use sha2::{Sha256,Digest};
 
 pub struct Block {
   transactions: String,
-  prev_block_hash: String, // sha2::Sha256,
+  prev_block_hash: Sha256,
   timestamp: DateTime<Utc>,
 }
 
 impl Block {
-  pub fn new(transactions: String, prev_block_hash: String) -> Block {
+  /**
+   * Create a block
+   * 
+   * @param transactions - transactions to be included in the block
+   * @param prev_block_hash - hash of the previous block
+   */
+  pub fn new(transactions: String, prev_block_hash: Sha256) -> Block {
     Block {
       transactions,
       prev_block_hash,
@@ -18,34 +23,34 @@ impl Block {
   }
 
   /**
-   * Return the hash of the block
+   * Get the hash of the specified block
+   * Hash length: 256 bits
+   * Hash algorithm: SHA-256
+   * Hash format: hexadecimal
+   * Hash calculation:
+   *  hash is made by concatenating the previous block hash, the timestamp (as bytes) and the transactions (as bytes)
    */
-  // fn getHash(&mut self) -> GenericArray<u8, _> {
-  //   let mut hasher = sha2::Sha256::new();
-  //   hasher.update(self.transactions.as_bytes());
-  //   // hasher.update(self.prev_block_hash.as_ref());
-  //   hasher.update(self.timestamp.to_string().as_bytes());
-  //   hasher.finalize() // return the hash
-  // }
-  pub fn get_hash(&mut self) -> String {
-    format!("{}{}{}", self.transactions, self.prev_block_hash, self.timestamp)
+  pub fn get_hash(&self) -> Sha256 {
+    let mut hasher = self.prev_block_hash.clone();
+    hasher.update(self.transactions.as_bytes());
+    hasher.update(self.timestamp.to_string().as_bytes());
+    hasher
   }
 }
 
 #[cfg(test)]
 mod tests {
-  // use super::*;
-  // #[test]
-  // fn create_block() {
-  //   let block = Block::new("test_transaction_string".to_string(), sha2::Sha256::new());
-  //   assert!(!block.transactions.is_empty(), "Block created unsuccessfully");
-  // }
+  use super::*;
 
-  // #[test]
-  // fn block_contain_transactions_datas() {
-  //   let block = Block::new("test_transaction_string".to_string(), sha2::Sha256::new());
-  //   assert!(block.transactions.contains("test_transaction_string"), "Block string format did not contain transactions datas")
-  // }
+  #[test]
+  fn create_block() {
+    let block = Block::new("test_transaction_string".to_string(), Sha256::new());
+    assert!(!block.transactions.is_empty(), "Block created unsuccessfully");
+  }
+
+  #[test]
+  fn block_contain_transactions_datas() {
+    let block = Block::new("test_transaction_string".to_string(), Sha256::new());
+    assert!(block.transactions.contains("test_transaction_string"), "Block string format did not contain transactions datas")
+  }
 }
-// println!("sha256 before write: {:x}", result);
-// https://stackoverflow.com/questions/66728572/how-to-print-sha256-hash-in-rust-genericarray
