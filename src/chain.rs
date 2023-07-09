@@ -1,67 +1,60 @@
-use std::collections::HashMap;
 use crate::block::Block;
-use sha2::{Sha256};
 
 pub struct Chain {
-  blocks: HashMap<Sha256, Block>,
+    blocks: Vec<Block>,
 }
 
 impl Chain {
-  /**
-   * Create a chain
-   * 
-   * @param blocks HashMap of hashes/Blocks to create
-   * 
-   * TODO: Add genesis block
-   */
-  pub fn new() -> Chain {
-    Chain { blocks: HashMap::new() }
-  }
-  
-  /**
-   * Get the last block added to the chain
-   * 
-   */
-  // pub fn getLastBlock(&mut self) -> Option<Block> {
-  //   match self.blocks.len() {
-  //       0 => None,
-  //       n => Some(&self.blocks[n-1])
-  //   }
-  // }!block.transactions.is_empty(), "Block created unsuccessfully"
+    /**
+     * Create a chain
+     *
+     * @param blocks vec of blocks to create
+     */
+    pub fn new() -> Chain {
+        // Genesis block is the first block in the chain
+        let genesis_block = Block::new("GENESIS BLOCK".to_string(), "0".to_string());
 
-  /**
-   * Add a block to the chain
-   * 
-   * @param block Block to add
-   */
-  // pub fn add_block(&mut self, mut block: Block) {
-  //   &self.blocks.insert(
-  //     block.get_hash(),
-  //     block
-  //   );
-  // }
+        Chain {
+            blocks: vec![genesis_block],
+        }
+    }
 
-  /**
-   * Get the block at a specific index (hash)
-   * 
-   * @param hash Index(hash) of the block to get
-   */
-  // pub fn get_block(&self, hash: &str) -> Option<&Block> {
-  //   if self.blocks.contains_key(hash) {
-  //     Some(self.blocks.get(hash).unwrap())
-  //   } else { None }
-  // }
+    /**
+     * Get the last block added to the chain
+     *
+     */
+    pub fn getLastBlock(&mut self) -> Block {
+        self.blocks.last().unwrap().clone()
+    }
 
+    /**
+     * Add a block to the chain
+     *
+     * @param block Block to add
+     */
+    pub fn add_block(&mut self, data: String) {
+        let new_block = Block::new(data, self.getLastBlock().get_hash());
+
+        self.blocks.push(new_block);
+    }
+
+    /**
+     * Get the block at a specific index (hash)
+     *
+     * @param hash Index(hash) of the block to get
+     */
+    pub fn get_block(&self, block_number: i64) -> Block {
+        self.blocks[block_number as usize].clone()
+    }
 }
 
 #[cfg(test)]
 mod tests {
-  use super::*;
+    use super::*;
 
-  #[test]
-  fn create_chain() {
-    let chain = Chain::new();
-    assert!(!chain.blocks.is_empty(), "Genesis block not created");
-  }
-
+    #[test]
+    fn create_chain() {
+        let chain = Chain::new();
+        assert!(!chain.blocks.is_empty(), "Genesis block not created");
+    }
 }
